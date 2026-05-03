@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - UTC2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div id="login-overlay">
+    <div class="admin-card">
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch">
+                <input type="checkbox" id="checkbox-login" onchange="toggleTheme(this)">
+                <div class="slider"></div>
+            </label>
+        </div>
+
+        <div class="logo-container">
+            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/03/Logo-Dai-Hoc-Giao-Thong-Van-Tai-UTC.png" class="logo-school">
+        </div>
+        <h1>ADMIN AUTHENTICATION</h1>
+        <p class="subtitle">ESP32 Cloud Security System</p>
+        
+        <input type="password" id="login-pass" class="input-field" placeholder="Enter admin password">
+        <button class="btn" onclick="checkLogin()">LOGIN</button>
+    </div>
+</div>
+
+<div class="admin-card" id="dashboard" style="display:none;">
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch">
+            <input type="checkbox" id="checkbox-dash" onchange="toggleTheme(this)">
+            <div class="slider"></div>
+        </label>
+    </div>
+    
+    <div class="logo-container">
+        <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/03/Logo-Dai-Hoc-Giao-Thong-Van-Tai-UTC.png" class="logo-school">
+    </div>
+    <h1>ATTENDANCE STATISTICS</h1>
+    <p class="subtitle">UNIVERSITY OF TRANSPORT AND COMMUNICATIONS - HCMC CAMPUS</p>
+
+    <div style="display: flex; gap: 15px; margin-bottom: 20px; width: 100%;">
+        <select id="class-select" class="input-field" style="margin-bottom: 0; font-weight: 800; cursor: pointer; flex: 2;" onchange="handleClassChange()">
+            <option value="">-- Loading classes --</option>
+        </select>
+        
+        <select id="date-select" class="input-field" style="margin-bottom: 0; font-weight: 800; cursor: pointer; flex: 1; color: var(--accent-color);" onchange="refreshData()">
+            <option value="">-- Date --</option>
+        </select>
+    </div>
+
+    <div class="stat-box">
+        <span id="total-present">0</span>
+        <small class="stat-label">LECTURERS PRESENT</small>
+    </div>
+
+    <div class="button-group">
+        <button class="btn" onclick="refreshData()" id="btnRef">🔄 REFRESH</button>
+        <button class="btn btn-excel" onclick="exportToExcel()">📥 EXPORT EXCEL</button>
+    </div>
+    
+    <div class="button-group">
+        <button class="btn btn-secondary" onclick="showSearchModal()">🔍 SEARCH ACCOUNT</button>
+        <button class="btn btn-secondary" onclick="showPassModal()">⚙️ CHANGE ADMIN PASSWORD</button>
+        <button class="btn btn-secondary" onclick="forceSyncData()">🔄 FORCE SYNC DATA (IF SHEET EDITED)</button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>LECTURER ID</th>
+                    <th>FULL NAME</th>
+                    <th>CHECK-IN TIME</th>
+                </tr>
+            </thead>
+            <tbody id="attendance-list"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="password-modal" class="modal-overlay">
+    <div class="admin-card modal-card">
+        <h1>CHANGE ADMIN PASSWORD</h1>
+        <p class="subtitle">Please enter your current password to verify</p>
+        
+        <input type="password" id="old-pass" class="input-field" placeholder="Current password">
+        <input type="password" id="new-pass" class="input-field" placeholder="New password">
+        
+        <button class="btn" onclick="updatePassword()">SAVE CHANGES</button>
+        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="closePassModal()">CANCEL</button>
+    </div>
+</div>
+
+<div id="search-modal" class="modal-overlay">
+    <div class="admin-card modal-card">
+        <h1>SEARCH ACCOUNT</h1>
+        <p class="subtitle">Support recovering passwords for lecturers</p>
+        
+        <input type="text" id="search-mssv" class="input-field" placeholder="Enter Lecturer ID to search">
+        <button class="btn" onclick="searchStudent()" id="btnSearch">SEARCH</button>
+        
+        <div id="search-result" class="search-result-box" style="display: none;">
+            <p>Lecturer ID: <b id="res-mssv" style="color: var(--accent-color);"></b></p>
+            <p>Full Name: <b id="res-name" style="color: var(--primary-color);"></b></p>
+            <p>Password: <b id="res-pass" style="color: var(--error);"></b></p>
+        </div>
+
+        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="closeSearchModal()">CLOSE</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
